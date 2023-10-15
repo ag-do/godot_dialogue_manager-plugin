@@ -54,24 +54,27 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 	zip_file.store_buffer(body)
 	zip_file.close()
 
-	OS.move_to_trash(ProjectSettings.globalize_path("res://addons/dialogue_manager"))
+	# Addons can have their folder renamed so let's figure out where we are
+	var addon_path: String = get_script().resource_path.get_base_dir().get_base_dir()
+
+	OS.move_to_trash(ProjectSettings.globalize_path(addon_path))
 
 	var zip_reader: ZIPReader = ZIPReader.new()
 	zip_reader.open(TEMP_FILE_NAME)
 	var files: PackedStringArray = zip_reader.get_files()
 
-	var base_path = files[1]
+	var base_path = files[1] + "dialogue_manager"
 	# Remove archive folder
 	files.remove_at(0)
 	# Remove assets folder
 	files.remove_at(0)
 
 	for path in files:
-		var new_file_path: String = path.replace(base_path, "")
+		var new_file_path: String = addon_path + path.replace(base_path, "")
 		if path.ends_with("/"):
-			DirAccess.make_dir_recursive_absolute("res://addons/%s" % new_file_path)
+			DirAccess.make_dir_recursive_absolute(new_file_path)
 		else:
-			var file: FileAccess = FileAccess.open("res://addons/%s" % new_file_path, FileAccess.WRITE)
+			var file: FileAccess = FileAccess.open(new_file_path, FileAccess.WRITE)
 			file.store_buffer(zip_reader.read_file(path))
 
 	zip_reader.close()

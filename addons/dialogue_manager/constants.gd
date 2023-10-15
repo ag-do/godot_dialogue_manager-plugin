@@ -253,7 +253,8 @@ static func get_error_message(error: int) -> String:
 
 static func translate(string: String) -> String:
 	var language: String = TranslationServer.get_tool_locale().substr(0, 2)
-	var translations_path: String = "res://addons/dialogue_manager/l10n/%s.po" % language
-	var fallback_translations_path: String = "res://addons/dialogue_manager/l10n/en.po"
+	var addon_path: String = new().get_script().resource_path.get_base_dir()
+	var translations_path: String = "%s/l10n/%s.po" % [addon_path, language]
+	var fallback_translations_path: String = "%s/l10n/en.po" % addon_path
 	var translations: Translation = load(translations_path if FileAccess.file_exists(translations_path) else fallback_translations_path)
 	return translations.get_message(string)

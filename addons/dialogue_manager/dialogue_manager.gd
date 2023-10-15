@@ -197,8 +197,8 @@ func create_resource_from_text(text: String) -> Resource:
 
 ## Show the example balloon
 func show_example_dialogue_balloon(resource: DialogueResource, title: String = "", extra_game_states: Array = []) -> void:
-	var ExampleBalloonScene = load("res://addons/dialogue_manager/example_balloon/example_balloon.tscn")
-	var SmallExampleBalloonScene = load("res://addons/dialogue_manager/example_balloon/small_example_balloon.tscn")
+	var ExampleBalloonScene = load(_get_addon_path("/example_balloon/example_balloon.tscn"))
+	var SmallExampleBalloonScene = load(_get_addon_path("/example_balloon/small_example_balloon.tscn"))
 
 	var is_small_window: bool = ProjectSettings.get_setting("display/window/size/viewport_width") < 400
 	var balloon: Node = (SmallExampleBalloonScene if is_small_window else ExampleBalloonScene).instantiate()
@@ -1023,9 +1023,9 @@ func thing_has_method(thing, method: String, args: Array) -> bool:
 	if thing.has_method(method):
 		return true
 
-	if method.to_snake_case() != method and ResourceLoader.exists("res://addons/dialogue_manager/DialogueManager.cs"):
+	if method.to_snake_case() != method and ResourceLoader.exists(_get_addon_path("/DialogueManager.cs")):
 		# If we get this far then the method might be a C# method with a Task return type
-		var dotnet_dialogue_manager = load("res://addons/dialogue_manager/DialogueManager.cs").new()
+		var dotnet_dialogue_manager = load(_get_addon_path("/DialogueManager.cs")).new()
 		return dotnet_dialogue_manager.ThingHasMethod(thing, method)
 
 	return false
@@ -1079,7 +1079,7 @@ func resolve_thing_method(thing, method: String, args: Array):
 		return await thing.callv(method, args)
 
 	# If we get here then it's probably a C# method with a Task return type
-	var dotnet_dialogue_manager = load("res://addons/dialogue_manager/DialogueManager.cs").new()
+	var dotnet_dialogue_manager = load(_get_addon_path("/DialogueManager.cs")).new()
 	dotnet_dialogue_manager.ResolveThingMethod(thing, method, args)
 	return await dotnet_dialogue_manager.Resolved
 
@@ -1313,3 +1313,7 @@ func resolve_color_method(color: Color, method_name: String, args: Array):
 			return color.to_rgba32()
 		"to_rgba64":
 			return color.to_rgba64()
+
+
+func _get_addon_path(file_name: String = "") -> String:
+	return get_script().resource_path.get_base_dir() + file_name

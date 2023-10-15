@@ -81,14 +81,9 @@ func _import(source_file: String, save_path: String, options: Dictionary, platfo
 		editor_plugin.add_errors_to_cache(source_file, errors)
 		return err
 
-	# Get the current addon version
-	var config: ConfigFile = ConfigFile.new()
-	config.load("res://addons/dialogue_manager/plugin.cfg")
-	var version: String = config.get_value("plugin", "version")
-
 	# Save the results to a resource
 	var resource: DialogueResource = DialogueResource.new()
-	resource.set_meta("dialogue_manager_version", version)
+	resource.set_meta("dialogue_manager_version", editor_plugin.get_version())
 
 	resource.titles = data.titles
 	resource.first_title = data.first_title

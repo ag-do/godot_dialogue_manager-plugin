@@ -928,7 +928,8 @@ func _on_test_button_pressed() -> void:
 
 	DialogueSettings.set_user_value("is_running_test_scene", true)
 	DialogueSettings.set_user_value("run_resource_path", current_file_path)
-	var test_scene_path: String = DialogueSettings.get_setting("custom_test_scene_path", "res://addons/dialogue_manager/test_scene.tscn")
+	var addon_path: String = get_script().resource_path.get_base_dir().get_base_dir()
+	var test_scene_path: String = DialogueSettings.get_setting("custom_test_scene_path", "%s/test_scene.tscn" % addon_path)
 	editor_plugin.get_editor_interface().play_custom_scene(test_scene_path)
 
 
